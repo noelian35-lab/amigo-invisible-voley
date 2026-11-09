@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigo Invisible 🏐 - Club Volei Esparreguera</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        heading: ['Fredoka', 'sans-serif'],
+                        body: ['Nunito', 'sans-serif'],
+                    },
+                    colors: {
+                        esparreguera: {
+                            dark: '#2A0835',
+                            purple: '#5B1A73',
+                            violet: '#8E28B7',
+                            lilac: '#BA52ED',
+                            lightLilac: '#F3E5F8',
+                            accent: '#F59E0B'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #2A0835 0%, #5B1A73 50%, #8E28B7 100%);
+            min-height: 100vh;
+        }
+        .font-heading { font-family: 'Fredoka', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-12">
+
+    <!-- Header Banner Club Volei Esparreguera -->
+    <header class="bg-gradient-to-r from-esparreguera-dark via-esparreguera-purple to-esparreguera-violet text-white shadow-xl border-b-4 border-esparreguera-lilac">
+        <div class="max-w-5xl mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showHomeView()">
+                <!-- Volleyball & Player Emblem -->
+                <div class="w-14 h-14 rounded-full bg-white p-1 shadow-md flex items-center justify-center border-2 border-esparreguera-lilac flex-shrink-0">
+                    <svg viewBox="0 0 100 100" class="w-full h-full">
+                        <circle cx="50" cy="50" r="46" fill="#8E28B7" />
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#FFFFFF" stroke-width="4" />
+                        <!-- Volleyball Lines -->
+                        <path d="M20,35 Q50,20 80,35 M20,65 Q50,80 80,65 M50,8 L50,92" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.4"/>
+                        <!-- Silhouette player spike -->
+                        <path d="M48,65 L44,48 L35,40 L45,35 L55,25 L68,22 M44,48 L52,58 L56,70 M45,35 L58,45 L62,55" stroke="#2A0835" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <circle cx="70" cy="18" r="6" fill="#F59E0B" stroke="#FFFFFF" stroke-width="1.5" />
+                    </svg>
+                </div>
+
+                <div class="text-center md:text-left">
+                    <span class="bg-esparreguera-lilac text-esparreguera-dark font-black text-[10px] px-3 py-0.5 rounded-full uppercase tracking-widest shadow-sm">
+                        Club Volei Esparreguera 🏐
+                    </span>
+                    <h1 class="text-2xl md:text-3xl font-extrabold font-heading text-white mt-0.5">
+                        Amigo Invisible <span class="text-esparreguera-lightLilac">Esparreguera</span> 🎁
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center gap-2">
+                <button onclick="showHomeView()" class="bg-white/10 hover:bg-white/20 text-white font-bold px-3 py-2 rounded-xl border border-white/20 text-xs flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-house"></i> Inicio
+                </button>
+                <button onclick="openAddPlayerModal()" class="bg-esparreguera-lilac hover:bg-purple-400 text-esparreguera-dark font-black px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition">
+                    <i class="fa-solid fa-user-plus"></i> Añadir Jugadora
+                </button>
+                <button onclick="copyAllSummaries()" class="bg-amber-400 hover:bg-amber-300 text-esparreguera-dark font-black px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-md transition">
+                    <i class="fa-solid fa-share-nodes"></i> Copiar para WhatsApp
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 mt-6">
+
+        <!-- ================= VISTA PRINCIPAL (INICIO) ================= -->
+        <div id="homeView" class="space-y-6">
+            
+            <!-- Filter & Search Bar -->
+            <div class="glass-card p-4 rounded-2xl shadow-md flex flex-col sm:flex-row items-center justify-between gap-3 border border-purple-200">
+                <div class="relative w-full sm:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-purple-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="renderHomeGrid()" placeholder="Buscar jugadora..." class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-purple-200 focus:ring-2 focus:ring-esparreguera-violet outline-none bg-white">
+                </div>
+                <div class="text-xs font-bold text-esparreguera-purple bg-esparreguera-lightLilac px-4 py-2 rounded-xl w-full sm:w-auto text-center border border-purple-200">
+                    Equipo: <span id="totalPlayersCount" class="text-esparreguera-dark font-black text-sm">0</span> jugadoras
+                </div>
+            </div>
+
+            <!-- Players Grid -->
+            <div id="playersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Player cards dynamically injected here -->
+            </div>
+
+        </div>
+
+        <!-- ================= VISTA PERFIL INDIVIDUAL ================= -->
+        <div id="profileView" class="hidden space-y-6">
+            
+            <!-- Top Profile Bar Navigation -->
+            <div class="glass-card p-4 rounded-2xl shadow-md flex items-center justify-between border border-purple-200">
+                <button onclick="showHomeView()" class="text-esparreguera-purple hover:text-esparreguera-dark text-xs font-black flex items-center gap-2 bg-esparreguera-lightLilac hover:bg-purple-200 px-3 py-2 rounded-xl transition">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a la lista
+                </button>
+                
+                <div class="flex items-center gap-2">
+                    <button onclick="navigateProfile(-1)" class="p-2 text-esparreguera-purple hover:bg-purple-100 rounded-xl text-xs font-bold" title="Anterior">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span id="profileNavIndex" class="text-xs font-bold text-purple-700">1 / 5</span>
+                    <button onclick="navigateProfile(1)" class="p-2 text-esparreguera-purple hover:bg-purple-100 rounded-xl text-xs font-bold" title="Siguiente">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Profile Content Card -->
+            <div class="glass-card rounded-3xl p-6 shadow-xl border-2 border-white space-y-6">
+                
+                <!-- Player Header Info -->
+                <div class="flex flex-col sm:flex-row items-center gap-4 bg-gradient-to-r from-esparreguera-purple via-esparreguera-violet to-esparreguera-lilac text-white p-5 rounded-2xl relative overflow-hidden shadow-md">
+                    <div id="profileAvatarDisplay" class="text-5xl bg-white/20 p-3 rounded-2xl shadow-inner border border-white/30">
+                        🏐
+                    </div>
+                    <div class="text-center sm:text-left flex-1">
+                        <h2 id="profileNameDisplay" class="text-2xl font-black font-heading">Nombre Jugadora</h2>
+                        <p id="profilePosDisplay" class="text-xs text-amber-300 font-bold uppercase tracking-wider">Club Volei Esparreguera</p>
+                    </div>
+                    <button onclick="saveCurrentProfile()" class="bg-amber-400 hover:bg-amber-300 text-esparreguera-dark font-black text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Perfil
+                    </button>
+                </div>
+
+                <!-- Avatar & Basic Details Editor -->
+                <div class="bg-purple-50/60 p-4 rounded-2xl border border-purple-200 space-y-3">
+                    <h3 class="text-xs font-black uppercase text-esparreguera-dark tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen-to-square text-esparreguera-violet"></i> Datos Principales
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre jugadora</label>
+                            <input type="text" id="editName" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-esparreguera-violet outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Posición / Rol</label>
+                            <input type="text" id="editPosition" placeholder="Ej: Rematadora, Líbero, Colocadora..." class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-esparreguera-violet outline-none bg-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Elige tu Avatar</label>
+                        <div class="flex flex-wrap gap-2" id="avatarPickerContainer">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LO QUE SÍ QUIERO -->
+                <div class="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-black uppercase text-emerald-900 tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i> Lo que SÍ me gustaría (Ideas de regalo) 🎁
+                        </h3>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <input type="text" id="wishInput" placeholder="Ej: Calcetines altos, botella de agua, coleteros..." class="flex-1 px-3 py-2 border border-emerald-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                        <button onclick="addWishItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow transition">
+                            + Añadir
+                        </button>
+                    </div>
+
+                    <ul id="wishList" class="space-y-2">
+                        <!-- Items -->
+                    </ul>
+                </div>
+
+                <!-- LO QUE NO QUIERO -->
+                <div class="bg-rose-50/80 p-4 rounded-2xl border border-rose-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-black uppercase text-rose-900 tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-xmark text-rose-600"></i> Lo que NO me gustaría recibir ❌
+                        </h3>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <input type="text" id="dontWantInput" placeholder="Ej: Colonias de olor fuerte, tazas..." class="flex-1 px-3 py-2 border border-rose-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
+                        <button onclick="addDontWantItem()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow transition">
+                            + Añadir
+                        </button>
+                    </div>
+
+                    <ul id="dontWantList" class="space-y-2">
+                        <!-- Items -->
+                    </ul>
+                </div>
+
+                <!-- TALLAS Y NOTAS -->
+                <div class="bg-purple-50/80 p-4 rounded-2xl border border-purple-200 space-y-3">
+                    <h3 class="text-xs font-black uppercase text-esparreguera-dark tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-shirt text-esparreguera-violet"></i> Tallas, Colores y Pistas
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Talla Ropa</label>
+                            <input type="text" id="editSize" placeholder="Ej: M" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Talla Zapatillas</label>
+                            <input type="text" id="editShoeSize" placeholder="Ej: 39 EU" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Color Favorito</label>
+                            <input type="text" id="editColor" placeholder="Ej: Lila / Morado" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm bg-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Notas adicionales o detalles</label>
+                        <textarea id="editNotes" rows="2" placeholder="Ej: Me encantan los chocolates, pelis, animes, mi equipo de fútbol es el Barça, hobbies..." class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-esparreguera-violet"></textarea>
+                    </div>
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div class="flex justify-between items-center pt-2">
+                    <button type="button" onclick="deleteCurrentPlayer()" class="text-rose-600 hover:text-rose-800 text-xs font-bold flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-trash"></i> Eliminar jugadora
+                    </button>
+                    <button onclick="saveCurrentProfile()" class="bg-esparreguera-purple hover:bg-esparreguera-dark text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-lg transition">
+                        Guardar Cambios
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal: Añadir Nueva Jugadora -->
+    <div id="addPlayerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden border-4 border-esparreguera-lilac">
+            <div class="bg-esparreguera-purple text-white p-4 flex justify-between items-center">
+                <h3 class="text-lg font-black font-heading">🏐 Añadir Jugadora</h3>
+                <button onclick="closeAddPlayerModal()" class="text-white hover:text-purple-200 font-bold">✕</button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nombre *</label>
+                    <input type="text" id="newPlayerName" placeholder="Ej: Sofía" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-esparreguera-violet">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Posición en cancha</label>
+                    <input type="text" id="newPlayerPos" placeholder="Ej: Central" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-esparreguera-violet">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Avatar</label>
+                    <div class="flex flex-wrap gap-2" id="addAvatarPicker">
+                        <!-- Populated -->
+                    </div>
+                </div>
+            </div>
+            <div class="bg-purple-50 p-4 border-t border-purple-100 flex justify-end gap-2">
+                <button onclick="closeAddPlayerModal()" class="px-3 py-1.5 text-xs text-slate-600 font-bold hover:bg-purple-100 rounded-lg">Cancelar</button>
+                <button onclick="confirmAddPlayer()" class="px-4 py-1.5 text-xs bg-esparreguera-violet hover:bg-esparreguera-purple text-white font-bold rounded-lg shadow">Añadir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script App Logic -->
+    <script>
+        // Categorized fun avatars list with emojis & SVGs
+        const AVATAR_CATEGORIES = [
+            {
+                name: "🎅 Navidad & Volei",
+                avatars: [
+                    { id: 'grinch', label: 'El Grinch', icon: '🤢' },
+                    { id: 'santa', label: 'Papa Noel', icon: '🎅' },
+                    { id: 'mrs_claus', label: 'Mama Noel', icon: '🤶' },
+                    { id: 'elf', label: 'Elfo Travieso', icon: '🧝' },
+                    { id: 'rudolph', label: 'Reno Rematador', icon: '🦌' },
+                    { id: 'snowman', label: 'Muñeco de Nieve', icon: '☃️' },
+                    { id: 'tree_voley', label: 'Árbol Navideño', icon: '🎄' }
+                ]
+            },
+            {
+                name: "🐾 Animales Voleibolistas",
+                avatars: [
+                    { id: 'cat_spiker', label: 'Gato Rematador', icon: '🐱' },
+                    { id: 'dog_libero', label: 'Perro Líbero', icon: '🐶' },
+                    { id: 'bear_setter', label: 'Oso Colocador', icon: '🐻' },
+                    { id: 'fox_tactics', label: 'Zorro Estratega', icon: '🦊' },
+                    { id: 'panda_block', label: 'Panda Bloqueador', icon: '🐼' },
+                    { id: 'unicorn_ace', label: 'Unicornio Saque Directo', icon: '🦄' },
+                    { id: 'tiger_power', label: 'Tigre Potencia', icon: '🐯' }
+                ]
+            },
+            {
+                name: "🔥 Memes & Post-Partido",
+                avatars: [
+                    { id: 'net_fail', label: '¡En la Red!', icon: '🕸️' },
+                    { id: 'ball_face', label: 'Balón a la Cara', icon: '🤪' },
+                    { id: 'beer_third_time', label: 'Cerveza Post-Partido', icon: '🍻' },
+                    { id: 'pizza_team', label: 'Pizza de Equipo', icon: '🍕' },
+                    { id: 'queen_court', label: 'Reina de la Pista', icon: '👑' },
+                    { id: 'fire_ace', label: 'Saque de Fuego', icon: '🔥' },
+                    { id: 'injured_hero', label: 'Kinesiotape & Hielo', icon: '🩹' }
+                ]
+            },
+            {
+                name: "🏐 Clásicos Club Esparreguera",
+                avatars: [
+                    { id: 'voley_purple', label: 'Balón Lila', icon: '🏐' },
+                    { id: 'purple_heart', label: 'Corazón Lila', icon: '💜' },
+                    { id: 'trophy', label: 'Copa Campeonas', icon: '🏆' },
+                    { id: 'gold_medal', label: 'Medalla de Oro', icon: '🥇' },
+                    { id: 'gift_box', label: 'Regalo Amigo Invisible', icon: '🎁' },
+                    { id: 'star_player', label: 'Estrella MVP', icon: '⭐' }
+                ]
+            }
+        ];
+
+        // Flat array of all avatar icons for quick lookup
+        const ALL_AVATARS = AVATAR_CATEGORIES.flatMap(cat => cat.avatars);
+
+        // Initial Team Roster with Lilac/Esparreguera default info
+        const DEFAULT_PLAYERS = [
+            {
+                id: '1',
+                name: 'Paula',
+                position: 'Colocadora',
+                avatar: '👑',
+                wishes: ['Calcetines de voleibol blancos o lilas', 'Cinta para el pelo ancha'],
+                dontWants: ['Colonias de olor muy dulce', 'Tazas de café'],
+                size: 'M',
+                shoeSize: '39 EU',
+                color: 'Lila / Morado',
+                notes: 'Me encantan los chocolates y snacks salados.'
+            },
+            {
+                id: '2',
+                name: 'Laura',
+                position: 'Rematadora',
+                avatar: '🤢',
+                wishes: ['Manga de compresión para brazo', 'Botella térmica para agua (1L)'],
+                dontWants: ['Maquillaje', 'Velas aromáticas'],
+                size: 'S',
+                shoeSize: '38 EU',
+                color: 'Negro / Lila',
+                notes: 'Siempre me faltan gomas de pelo para los entrenos.'
+            },
+            {
+                id: '3',
+                name: 'Marta',
+                position: 'Líbero',
+                avatar: '🐶',
+                wishes: ['Rodilleras acolchadas blancas', 'Toalla de microfibra deportiva'],
+                dontWants: ['Libretas o agendas de papel'],
+                size: 'XS',
+                shoeSize: '37 EU',
+                color: 'Morado Esparreguera',
+                notes: 'Prefiero cosas útiles para los partidos.'
+            }
+        ];
+
+        let players = [];
+        let activePlayerId = null;
+        let selectedAddAvatar = '🏐';
+        let selectedEditAvatar = '🏐';
+
+        window.onload = function() {
+            loadData();
+            renderHomeGrid();
+            renderAvatarPickers();
+        };
+
+        function loadData() {
+            const saved = localStorage.getItem('voley_esparreguera_amigo_invisible');
+            if (saved) {
+                try {
+                    players = JSON.parse(saved);
+                } catch(e) {
+                    players = DEFAULT_PLAYERS;
+                }
+            } else {
+                players = DEFAULT_PLAYERS;
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('voley_esparreguera_amigo_invisible', JSON.stringify(players));
+        }
+
+        // Home View Rendering
+        function renderHomeGrid() {
+            const grid = document.getElementById('playersGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+            grid.innerHTML = '';
+
+            const filtered = players.filter(p => p.name.toLowerCase().includes(search) || (p.position && p.position.toLowerCase().includes(search)));
+            document.getElementById('totalPlayersCount').innerText = players.length;
+
+            filtered.forEach(player => {
+                const wishCount = player.wishes ? player.wishes.length : 0;
+                const hasInfo = wishCount > 0;
+
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-3xl p-5 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border-2 border-white flex flex-col justify-between group";
+                card.onclick = () => openProfileView(player.id);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-4xl bg-purple-100 p-2.5 rounded-2xl border border-purple-200">${player.avatar || '🏐'}</span>
+                            <span class="text-[10px] font-black uppercase px-2.5 py-1 rounded-full ${hasInfo ? 'bg-purple-100 text-esparreguera-purple border border-purple-300' : 'bg-slate-100 text-slate-500'}">
+                                ${hasInfo ? `💜 ${wishCount} deseos` : '⏳ Sin rellenar'}
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-black font-heading text-esparreguera-dark group-hover:text-esparreguera-violet transition-colors">
+                            ${escapeHtml(player.name)}
+                        </h3>
+                        <p class="text-xs font-bold text-slate-500 mb-3">
+                            🏐 ${escapeHtml(player.position || 'Jugadora Esparreguera')}
+                        </p>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-purple-100 flex justify-between items-center text-xs font-black text-esparreguera-violet">
+                        <span>Ver / Editar Perfil</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function showHomeView() {
+            document.getElementById('homeView').classList.remove('hidden');
+            document.getElementById('profileView').classList.add('hidden');
+            renderHomeGrid();
+        }
+
+        // Profile View Logic
+        function openProfileView(id) {
+            activePlayerId = id;
+            const player = players.find(p => p.id === id);
+            if (!player) return;
+
+            document.getElementById('profileNameDisplay').innerText = player.name;
+            document.getElementById('profilePosDisplay').innerText = player.position || 'Club Volei Esparreguera';
+            document.getElementById('profileAvatarDisplay').innerText = player.avatar || '🏐';
+
+            document.getElementById('editName').value = player.name;
+            document.getElementById('editPosition').value = player.position || '';
+            document.getElementById('editSize').value = player.size || '';
+            document.getElementById('editShoeSize').value = player.shoeSize || '';
+            document.getElementById('editColor').value = player.color || '';
+            document.getElementById('editNotes').value = player.notes || '';
+
+            selectedEditAvatar = player.avatar || '🏐';
+            updateAvatarPickerUI('avatarPickerContainer', selectedEditAvatar, (av) => {
+                selectedEditAvatar = av;
+                document.getElementById('profileAvatarDisplay').innerText = av;
+            });
+
+            renderWishList(player.wishes || []);
+            renderDontWantList(player.dontWants || []);
+
+            // Update navigation index
+            const index = players.findIndex(p => p.id === id);
+            document.getElementById('profileNavIndex').innerText = `${index + 1} / ${players.length}`;
+
+            document.getElementById('homeView').classList.add('hidden');
+            document.getElementById('profileView').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function navigateProfile(direction) {
+            const currentIndex = players.findIndex(p => p.id === activePlayerId);
+            if (currentIndex === -1) return;
+            let nextIndex = currentIndex + direction;
+            if (nextIndex < 0) nextIndex = players.length - 1;
+            if (nextIndex >= players.length) nextIndex = 0;
+            openProfileView(players[nextIndex].id);
+        }
+
+        function saveCurrentProfile() {
+            if (!activePlayerId) return;
+            const player = players.find(p => p.id === activePlayerId);
+            if (!player) return;
+
+            const name = document.getElementById('editName').value.trim();
+            if (!name) {
+                alert("El nombre no puede estar vacío");
+                return;
+            }
+
+            player.name = name;
+            player.position = document.getElementById('editPosition').value.trim();
+            player.avatar = selectedEditAvatar;
+            player.size = document.getElementById('editSize').value.trim();
+            player.shoeSize = document.getElementById('editShoeSize').value.trim();
+            player.color = document.getElementById('editColor').value.trim();
+            player.notes = document.getElementById('editNotes').value.trim();
+
+            saveData();
+            document.getElementById('profileNameDisplay').innerText = player.name;
+            document.getElementById('profilePosDisplay').innerText = player.position || 'Jugadora';
+            alert("💜 Perfil guardado correctamente");
+        }
+
+        function deleteCurrentPlayer() {
+            if (!activePlayerId) return;
+            const player = players.find(p => p.id === activePlayerId);
+            if (!player) return;
+
+            if (confirm(`¿Seguro que quieres eliminar a ${player.name} de la lista del equipo?`)) {
+                players = players.filter(p => p.id !== activePlayerId);
+                saveData();
+                showHomeView();
+            }
+        }
+
+        // Wishes & DontWants Item lists
+        function renderWishList(items) {
+            const list = document.getElementById('wishList');
+            list.innerHTML = '';
+            if (items.length === 0) {
+                list.innerHTML = `<li class="text-xs text-slate-400 italic">No has añadido ideas de regalo todavía.</li>`;
+                return;
+            }
+            items.forEach((item, idx) => {
+                const li = document.createElement('li');
+                li.className = "flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-emerald-200 text-sm font-semibold text-slate-700 shadow-sm";
+                li.innerHTML = `
+                    <span>🎁 ${escapeHtml(item)}</span>
+                    <button onclick="removeWishItem(${idx})" class="text-slate-400 hover:text-rose-600 font-bold px-1">✕</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function addWishItem() {
+            const input = document.getElementById('wishInput');
+            const val = input.value.trim();
+            if (!val || !activePlayerId) return;
+            const player = players.find(p => p.id === activePlayerId);
+            if (player) {
+                if (!player.wishes) player.wishes = [];
+                player.wishes.push(val);
+                renderWishList(player.wishes);
+                input.value = '';
+            }
+        }
+
+        function removeWishItem(idx) {
+            const player = players.find(p => p.id === activePlayerId);
+            if (player && player.wishes) {
+                player.wishes.splice(idx, 1);
+                renderWishList(player.wishes);
+            }
+        }
+
+        function renderDontWantList(items) {
+            const list = document.getElementById('dontWantList');
+            list.innerHTML = '';
+            if (items.length === 0) {
+                list.innerHTML = `<li class="text-xs text-slate-400 italic">No has puesto nada en la lista de cosas a evitar.</li>`;
+                return;
+            }
+            items.forEach((item, idx) => {
+                const li = document.createElement('li');
+                li.className = "flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-rose-200 text-sm font-semibold text-slate-700 shadow-sm";
+                li.innerHTML = `
+                    <span>❌ ${escapeHtml(item)}</span>
+                    <button onclick="removeDontWantItem(${idx})" class="text-slate-400 hover:text-rose-600 font-bold px-1">✕</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function addDontWantItem() {
+            const input = document.getElementById('dontWantInput');
+            const val = input.value.trim();
+            if (!val || !activePlayerId) return;
+            const player = players.find(p => p.id === activePlayerId);
+            if (player) {
+                if (!player.dontWants) player.dontWants = [];
+                player.dontWants.push(val);
+                renderDontWantList(player.dontWants);
+                input.value = '';
+            }
+        }
+
+        function removeDontWantItem(idx) {
+            const player = players.find(p => p.id === activePlayerId);
+            if (player && player.dontWants) {
+                player.dontWants.splice(idx, 1);
+                renderDontWantList(player.dontWants);
+            }
+        }
+
+        // Avatar Pickers with Categories
+        function renderAvatarPickers() {
+            updateAvatarPickerUI('addAvatarPicker', selectedAddAvatar, (av) => { selectedAddAvatar = av; });
+        }
+
+        function updateAvatarPickerUI(containerId, currentSelected, onSelect) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            AVATAR_CATEGORIES.forEach(category => {
+                const catWrapper = document.createElement('div');
+                catWrapper.className = "w-full space-y-1 mt-2";
+
+                const catTitle = document.createElement('p');
+                catTitle.className = "text-[11px] font-black uppercase text-esparreguera-purple tracking-wider flex items-center gap-1";
+                catTitle.innerText = category.name;
+                catWrapper.appendChild(catTitle);
+
+                const grid = document.createElement('div');
+                grid.className = "flex flex-wrap gap-2";
+
+                category.avatars.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.title = item.label;
+                    btn.className = `w-10 h-10 text-xl rounded-xl border flex items-center justify-center transition-all duration-200 ${item.icon === currentSelected ? 'bg-esparreguera-lilac border-esparreguera-dark scale-110 shadow-md ring-2 ring-esparreguera-violet' : 'bg-white border-purple-200 hover:bg-purple-100 hover:scale-105'}`;
+                    btn.innerText = item.icon;
+                    btn.onclick = () => {
+                        onSelect(item.icon);
+                        updateAvatarPickerUI(containerId, item.icon, onSelect);
+                    };
+                    grid.appendChild(btn);
+                });
+
+                catWrapper.appendChild(grid);
+                container.appendChild(catWrapper);
+            });
+        }
+
+        // Add Player Modal
+        function openAddPlayerModal() {
+            document.getElementById('newPlayerName').value = '';
+            document.getElementById('newPlayerPos').value = '';
+            selectedAddAvatar = '🏐';
+            renderAvatarPickers();
+            document.getElementById('addPlayerModal').classList.remove('hidden');
+        }
+
+        function closeAddPlayerModal() {
+            document.getElementById('addPlayerModal').classList.add('hidden');
+        }
+
+        function confirmAddPlayer() {
+            const name = document.getElementById('newPlayerName').value.trim();
+            if (!name) {
+                alert("Por favor introduce un nombre");
+                return;
+            }
+            const newP = {
+                id: Date.now().toString(),
+                name: name,
+                position: document.getElementById('newPlayerPos').value.trim() || 'Jugadora',
+                avatar: selectedAddAvatar,
+                wishes: [],
+                dontWants: [],
+                size: '',
+                shoeSize: '',
+                color: '',
+                notes: ''
+            };
+            players.push(newP);
+            saveData();
+            closeAddPlayerModal();
+            renderHomeGrid();
+            openProfileView(newP.id);
+        }
+
+        // Export text for WhatsApp / Sharing
+        function copyAllSummaries() {
+            let summary = "🏐 AMIGO INVISIBLE - CLUB VOLEI ESPARREGUERA 💜\n\n";
+            players.forEach(p => {
+                summary += `👤 ${p.name.toUpperCase()} (${p.position || 'Jugadora'})\n`;
+                summary += `✅ Lo que QUIERE: ${p.wishes && p.wishes.length > 0 ? p.wishes.join(', ') : 'Pendiente'}\n`;
+                summary += `❌ Lo que NO QUIERE: ${p.dontWants && p.dontWants.length > 0 ? p.dontWants.join(', ') : 'Sin especificar'}\n`;
+                if (p.size || p.shoeSize) summary += `👕 Talla ropa: ${p.size || '-'} | Zapatillas: ${p.shoeSize || '-'}\n`;
+                if (p.color) summary += `🎨 Color fav: ${p.color}\n`;
+                if (p.notes) summary += `📝 Nota: ${p.notes}\n`;
+                summary += `-----------------------------------\n`;
+            });
+
+            const textArea = document.createElement('textarea');
+            textArea.value = summary;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            alert("📋 ¡Resumen de todas las jugadoras copiado! Ya lo puedes pegar en el grupo de WhatsApp del equipo.");
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+    </script>
+</body>
+</html>
