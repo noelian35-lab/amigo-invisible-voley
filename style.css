@@ -1,0 +1,18 @@
+body {
+    font-family: 'Nunito', sans-serif;
+    /* Fondo con la imagen y la capa oscura semitransparente para legibilidad */
+    background: linear-gradient(rgba(42, 8, 53, 0.85), rgba(91, 26, 115, 0.85)), url('fondo-voley.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.font-heading { 
+    font-family: 'Fredoka', sans-serif; 
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
