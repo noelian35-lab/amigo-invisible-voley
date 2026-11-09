@@ -227,6 +227,9 @@ function saveCurrentProfile() {
     player.notes = document.getElementById('editNotes').value.trim();
 
     saveData();
+    
+    // Pop-up de confirmación y vuelta automática al inicio
+    alert("💜 ¡Perfil guardado correctamente!");
     showHomeView();
 }
 
