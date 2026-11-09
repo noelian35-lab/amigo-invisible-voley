@@ -102,3 +102,200 @@
                 <div class="relative w-full sm:w-72">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-purple-400 text-sm"></i>
                     <input type="text" id="searchInput" oninput="renderHomeGrid()" placeholder="Buscar jugadora..." class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-purple-200 focus:ring-2 focus:ring-esparreguera-violet outline-none bg-white">
+                </div>
+                <div class="text-xs font-bold text-esparreguera-purple bg-esparreguera-lightLilac px-4 py-2 rounded-xl w-full sm:w-auto text-center border border-purple-200">
+                    Equipo: <span id="totalPlayersCount" class="text-esparreguera-dark font-black text-sm">0</span> jugadoras
+                </div>
+            </div>
+
+            <!-- Players Grid -->
+            <div id="playersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Player cards dynamically injected here -->
+            </div>
+
+        </div>
+
+        <!-- ================= VISTA PERFIL INDIVIDUAL ================= -->
+        <div id="profileView" class="hidden space-y-6">
+            
+            <!-- Top Profile Bar Navigation -->
+            <div class="glass-card p-4 rounded-2xl shadow-md flex items-center justify-between border border-purple-200">
+                <button onclick="showHomeView()" class="text-esparreguera-purple hover:text-esparreguera-dark text-xs font-black flex items-center gap-2 bg-esparreguera-lightLilac hover:bg-purple-200 px-3 py-2 rounded-xl transition">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a la lista
+                </button>
+                
+                <div class="flex items-center gap-2">
+                    <button onclick="navigateProfile(-1)" class="p-2 text-esparreguera-purple hover:bg-purple-100 rounded-xl text-xs font-bold" title="Anterior">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <span id="profileNavIndex" class="text-xs font-bold text-purple-700">1 / 5</span>
+                    <button onclick="navigateProfile(1)" class="p-2 text-esparreguera-purple hover:bg-purple-100 rounded-xl text-xs font-bold" title="Siguiente">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Profile Content Card -->
+            <div class="glass-card rounded-3xl p-6 shadow-xl border-2 border-white space-y-6">
+                
+                <!-- Player Header Info -->
+                <div class="flex flex-col sm:flex-row items-center gap-4 bg-gradient-to-r from-esparreguera-purple via-esparreguera-violet to-esparreguera-lilac text-white p-5 rounded-2xl relative overflow-hidden shadow-md">
+                    <div id="profileAvatarDisplay" class="text-5xl bg-white/20 p-3 rounded-2xl shadow-inner border border-white/30">
+                        🏐
+                    </div>
+                    <div class="text-center sm:text-left flex-1">
+                        <h2 id="profileNameDisplay" class="text-2xl font-black font-heading">Nombre Jugadora</h2>
+                        <p id="profilePosDisplay" class="text-xs text-amber-300 font-bold uppercase tracking-wider">Club Volei Esparreguera</p>
+                    </div>
+                    <button onclick="saveCurrentProfile()" class="bg-amber-400 hover:bg-amber-300 text-esparreguera-dark font-black text-xs px-4 py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar Perfil
+                    </button>
+                </div>
+
+                <!-- Avatar & Basic Details Editor -->
+                <div class="bg-purple-50/60 p-4 rounded-2xl border border-purple-200 space-y-3">
+                    <h3 class="text-xs font-black uppercase text-esparreguera-dark tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen-to-square text-esparreguera-violet"></i> Datos Principales
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nombre jugadora</label>
+                            <input type="text" id="editName" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-esparreguera-violet outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Posición / Rol</label>
+                            <input type="text" id="editPosition" placeholder="Ej: Rematadora, Líbero, Colocadora..." class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-esparreguera-violet outline-none bg-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Elige tu Avatar</label>
+                        <div class="flex flex-wrap gap-2" id="avatarPickerContainer">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LO QUE SÍ QUIERO -->
+                <div class="bg-emerald-50/80 p-4 rounded-2xl border border-emerald-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-black uppercase text-emerald-900 tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i> Lo que SÍ me gustaría (Ideas de regalo) 🎁
+                        </h3>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <input type="text" id="wishInput" placeholder="Ej: Calcetines altos, botella de agua, coleteros..." class="flex-1 px-3 py-2 border border-emerald-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+                        <button onclick="addWishItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow transition">
+                            + Añadir
+                        </button>
+                    </div>
+
+                    <ul id="wishList" class="space-y-2">
+                        <!-- Items -->
+                    </ul>
+                </div>
+
+                <!-- LO QUE NO QUIERO -->
+                <div class="bg-rose-50/80 p-4 rounded-2xl border border-rose-200 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xs font-black uppercase text-rose-900 tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-xmark text-rose-600"></i> Lo que NO me gustaría recibir ❌
+                        </h3>
+                    </div>
+
+                    <div class="flex gap-2">
+                        <input type="text" id="dontWantInput" placeholder="Ej: Colonias de olor fuerte, tazas..." class="flex-1 px-3 py-2 border border-rose-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 bg-white">
+                        <button onclick="addDontWantItem()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow transition">
+                            + Añadir
+                        </button>
+                    </div>
+
+                    <ul id="dontWantList" class="space-y-2">
+                        <!-- Items -->
+                    </ul>
+                </div>
+
+                <!-- TALLAS Y NOTAS -->
+                <div class="bg-purple-50/80 p-4 rounded-2xl border border-purple-200 space-y-3">
+                    <h3 class="text-xs font-black uppercase text-esparreguera-dark tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-shirt text-esparreguera-violet"></i> Tallas, Colores y Pistas
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Talla Ropa</label>
+                            <input type="text" id="editSize" placeholder="Ej: M" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Talla Zapatillas</label>
+                            <input type="text" id="editShoeSize" placeholder="Ej: 39 EU" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Color Favorito</label>
+                            <input type="text" id="editColor" placeholder="Ej: Lila / Morado" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm bg-white">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Notas adicionales o detalles</label>
+                        <textarea id="editNotes" rows="2" placeholder="Ej: Me encantan los chocolates, pelis, animes, mi equipo de fútbol es el Barça, hobbies..." class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-esparreguera-violet"></textarea>
+                    </div>
+                </div>
+
+                <!-- Footer Action Buttons -->
+                <div class="flex justify-between items-center pt-2">
+                    <button type="button" onclick="deleteCurrentPlayer()" class="text-rose-600 hover:text-rose-800 text-xs font-bold flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-trash"></i> Eliminar jugadora
+                    </button>
+                    <button onclick="saveCurrentProfile()" class="bg-esparreguera-purple hover:bg-esparreguera-dark text-white font-bold text-sm px-6 py-2.5 rounded-xl shadow-lg transition">
+                        Guardar Cambios
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal: Añadir Nueva Jugadora -->
+    <div id="addPlayerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full overflow-hidden border-4 border-esparreguera-lilac">
+            <div class="bg-esparreguera-purple text-white p-4 flex justify-between items-center">
+                <h3 class="text-lg font-black font-heading">🏐 Añadir Jugadora</h3>
+                <button onclick="closeAddPlayerModal()" class="text-white hover:text-purple-200 font-bold">✕</button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nombre *</label>
+                    <input type="text" id="newPlayerName" placeholder="Ej: Sofía" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-esparreguera-violet">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Posición en cancha</label>
+                    <input type="text" id="newPlayerPos" placeholder="Ej: Central" class="w-full px-3 py-2 border border-purple-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-esparreguera-violet">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Avatar</label>
+                    <div class="flex flex-wrap gap-2" id="addAvatarPicker">
+                        <!-- Populated -->
+                    </div>
+                </div>
+            </div>
+            <div class="bg-purple-50 p-4 border-t border-purple-100 flex justify-end gap-2">
+                <button onclick="closeAddPlayerModal()" class="px-3 py-1.5 text-xs text-slate-600 font-bold hover:bg-purple-100 rounded-lg">Cancelar</button>
+                <button onclick="confirmAddPlayer()" class="px-4 py-1.5 text-xs bg-esparreguera-violet hover:bg-esparreguera-purple text-white font-bold rounded-lg shadow">Añadir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script App Logic -->
+    <script>
+        const AVATAR_CATEGORIES = [
+            {
+                name: "🎅 Navidad & Volei",
+                avatars: [
+                    { id: 'grinch', label: 'El Grinch', icon: '🤢' },
+                    { id: 'santa', label: 'Papa Noel', icon: '🎅' },
+                    { id: 'mrs_claus', label: 'Mama Noel', icon: '🤶' },
+                    { id: 'elf', label: 'Elfo Travieso', icon: '🧝' },
+                    { id: 'rudolph', label: 'Reno Rematador', icon: '🦌' },
+                    { id: 'snowman', label: 'Muñeco de Nieve', icon: '☃️' },
+                    { id: 'tree_voley', label: 'Árbol Navideño
