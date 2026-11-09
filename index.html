@@ -244,7 +244,7 @@
     <!-- Firebase SDK & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-database.js";
+        import { getDatabase, ref, onValue, set, get, child } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCIE6_448c1BXbdsA8rwZEumnTGl0Re7D0",
@@ -355,14 +355,23 @@
         let selectedAddAvatar = '🏐';
         let selectedEditAvatar = '🏐';
 
-        // Escuchar cambios en la nube en tiempo real
+        // Comprobar si Firebase está vacio antes de inicializar para no pisar datos
+        const dbRef = ref(db);
+        get(child(dbRef, 'players')).then((snapshot) => {
+            if (!snapshot.exists()) {
+                set(playersRef, DEFAULT_PLAYERS);
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+
+        // Escuchar cambios en tiempo real
         onValue(playersRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 players = Array.isArray(data) ? data : Object.values(data);
             } else {
-                players = DEFAULT_PLAYERS;
-                saveDataToFirebase();
+                players = [];
             }
             renderHomeGrid();
             renderAvatarPickers();
@@ -376,6 +385,7 @@
             const grid = document.getElementById('playersGrid');
             const searchInput = document.getElementById('searchInput');
             const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            if (!grid) return;
             grid.innerHTML = '';
 
             const filtered = players.filter(p => p.name.toLowerCase().includes(search) || (p.position && p.position.toLowerCase().includes(search)));
@@ -500,6 +510,7 @@
 
         function renderWishList(items) {
             const list = document.getElementById('wishList');
+            if (!list) return;
             list.innerHTML = '';
             if (items.length === 0) {
                 list.innerHTML = `<li class="text-xs text-slate-400 italic">No has añadido ideas de regalo todavía.</li>`;
@@ -510,7 +521,7 @@
                 li.className = "flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-emerald-200 text-sm font-semibold text-slate-700 shadow-sm";
                 li.innerHTML = `
                     <span>🎁 ${escapeHtml(item)}</span>
-                    <button onclick="removeWishItem(${idx})" class="text-slate-400 hover:text-rose-600 font-bold px-1">✕</button>
+                    <button type="button" onclick="removeWishItem(${idx})" class="text-slate-400 hover:text-rose-600 font-bold px-1">✕</button>
                 `;
                 list.appendChild(li);
             });
@@ -539,6 +550,7 @@
 
         function renderDontWantList(items) {
             const list = document.getElementById('dontWantList');
+            if (!list) return;
             list.innerHTML = '';
             if (items.length === 0) {
                 list.innerHTML = `<li class="text-xs text-slate-400 italic">No has puesto nada en la lista de cosas a evitar.</li>`;
@@ -549,7 +561,7 @@
                 li.className = "flex items-center justify-between bg-white px-3 py-2 rounded-xl border border-rose-200 text-sm font-semibold text-slate-700 shadow-sm";
                 li.innerHTML = `
                     <span>❌ ${escapeHtml(item)}</span>
-                    <button onclick="removeDontWantItem(${idx})" class="text-slate-400 hover:text-rose-600 font-bold px-1">✕</button>
+                    <button type="button" onclick="removeDontWantItem(${idx})" class="text-slate-400 hover:text-rose-600 font-bold px-1">✕</button>
                 `;
                 list.appendChild(li);
             });
