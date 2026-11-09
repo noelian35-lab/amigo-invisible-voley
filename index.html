@@ -56,9 +56,8 @@
             
             <!-- Logo & Title -->
             <div class="flex items-center gap-3 cursor-pointer" onclick="showHomeView()">
-                <!-- Contenedor del Logo con la imagen -->
                 <div class="w-14 h-14 rounded-full bg-white p-0.5 shadow-md flex items-center justify-center border-2 border-esparreguera-lilac flex-shrink-0 overflow-hidden">
-                    <img src="logo.png" alt="Logo Club Volei Esparreguera" class="w-full h-full object-cover rounded-full">
+                    <img src="logo.png" alt="Logo Club Volei Esparreguera" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null; this.parentElement.innerHTML='🏐';">
                 </div>
 
                 <div class="text-center md:text-left">
@@ -242,8 +241,26 @@
         </div>
     </div>
 
-    <!-- Script App Logic -->
-    <script>
+    <!-- Firebase SDK & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIE6_448c1BXbdsA8rwZEumnTGl0Re7D0",
+            authDomain: "amigo-invisible-voley.firebaseapp.com",
+            databaseURL: "https://amigo-invisible-voley-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "amigo-invisible-voley",
+            storageBucket: "amigo-invisible-voley.firebasestorage.app",
+            messagingSenderId: "981063697812",
+            appId: "1:981063697812:web:1072941383c4b687b37b81",
+            measurementId: "G-Y0LMZVE49N"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const playersRef = ref(db, 'players');
+
         const AVATAR_CATEGORIES = [
             {
                 name: "🎅 Navidad & Volei",
@@ -294,8 +311,6 @@
             }
         ];
 
-        const ALL_AVATARS = AVATAR_CATEGORIES.flatMap(cat => cat.avatars);
-
         const DEFAULT_PLAYERS = [
             {
                 id: '1',
@@ -340,33 +355,27 @@
         let selectedAddAvatar = '🏐';
         let selectedEditAvatar = '🏐';
 
-        window.onload = function() {
-            loadData();
-            renderHomeGrid();
-            renderAvatarPickers();
-        };
-
-        function loadData() {
-            const saved = localStorage.getItem('voley_esparreguera_amigo_invisible');
-            if (saved) {
-                try {
-                    players = JSON.parse(saved);
-                } catch(e) {
-                    players = DEFAULT_PLAYERS;
-                }
+        // Escuchar cambios en la nube en tiempo real
+        onValue(playersRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                players = Array.isArray(data) ? data : Object.values(data);
             } else {
                 players = DEFAULT_PLAYERS;
-                saveData();
+                saveDataToFirebase();
             }
+            renderHomeGrid();
+            renderAvatarPickers();
+        });
+
+        function saveDataToFirebase() {
+            set(playersRef, players);
         }
 
-        function saveData() {
-            localStorage.setItem('voley_esparreguera_amigo_invisible', JSON.stringify(players));
-        }
-
-        function renderHomeGrid() {
+        window.renderHomeGrid = function() {
             const grid = document.getElementById('playersGrid');
-            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+            const searchInput = document.getElementById('searchInput');
+            const search = searchInput ? searchInput.value.toLowerCase().trim() : '';
             grid.innerHTML = '';
 
             const filtered = players.filter(p => p.name.toLowerCase().includes(search) || (p.position && p.position.toLowerCase().includes(search)));
@@ -403,15 +412,15 @@
                 `;
                 grid.appendChild(card);
             });
-        }
+        };
 
-        function showHomeView() {
+        window.showHomeView = function() {
             document.getElementById('homeView').classList.remove('hidden');
             document.getElementById('profileView').classList.add('hidden');
             renderHomeGrid();
-        }
+        };
 
-        function openProfileView(id) {
+        window.openProfileView = function(id) {
             activePlayerId = id;
             const player = players.find(p => p.id === id);
             if (!player) return;
@@ -442,18 +451,18 @@
             document.getElementById('homeView').classList.add('hidden');
             document.getElementById('profileView').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        };
 
-        function navigateProfile(direction) {
+        window.navigateProfile = function(direction) {
             const currentIndex = players.findIndex(p => p.id === activePlayerId);
             if (currentIndex === -1) return;
             let nextIndex = currentIndex + direction;
             if (nextIndex < 0) nextIndex = players.length - 1;
             if (nextIndex >= players.length) nextIndex = 0;
             openProfileView(players[nextIndex].id);
-        }
+        };
 
-        function saveCurrentProfile() {
+        window.saveCurrentProfile = function() {
             if (!activePlayerId) return;
             const player = players.find(p => p.id === activePlayerId);
             if (!player) return;
@@ -472,22 +481,22 @@
             player.color = document.getElementById('editColor').value.trim();
             player.notes = document.getElementById('editNotes').value.trim();
 
-            saveData();
+            saveDataToFirebase();
             alert("💜 ¡Perfil guardado correctamente!");
             showHomeView();
-        }
+        };
 
-        function deleteCurrentPlayer() {
+        window.deleteCurrentPlayer = function() {
             if (!activePlayerId) return;
             const player = players.find(p => p.id === activePlayerId);
             if (!player) return;
 
             if (confirm(`¿Seguro que quieres eliminar a ${player.name} de la lista del equipo?`)) {
                 players = players.filter(p => p.id !== activePlayerId);
-                saveData();
+                saveDataToFirebase();
                 showHomeView();
             }
-        }
+        };
 
         function renderWishList(items) {
             const list = document.getElementById('wishList');
@@ -507,7 +516,7 @@
             });
         }
 
-        function addWishItem() {
+        window.addWishItem = function() {
             const input = document.getElementById('wishInput');
             const val = input.value.trim();
             if (!val || !activePlayerId) return;
@@ -518,15 +527,15 @@
                 renderWishList(player.wishes);
                 input.value = '';
             }
-        }
+        };
 
-        function removeWishItem(idx) {
+        window.removeWishItem = function(idx) {
             const player = players.find(p => p.id === activePlayerId);
             if (player && player.wishes) {
                 player.wishes.splice(idx, 1);
                 renderWishList(player.wishes);
             }
-        }
+        };
 
         function renderDontWantList(items) {
             const list = document.getElementById('dontWantList');
@@ -546,7 +555,7 @@
             });
         }
 
-        function addDontWantItem() {
+        window.addDontWantItem = function() {
             const input = document.getElementById('dontWantInput');
             const val = input.value.trim();
             if (!val || !activePlayerId) return;
@@ -557,15 +566,15 @@
                 renderDontWantList(player.dontWants);
                 input.value = '';
             }
-        }
+        };
 
-        function removeDontWantItem(idx) {
+        window.removeDontWantItem = function(idx) {
             const player = players.find(p => p.id === activePlayerId);
             if (player && player.dontWants) {
                 player.dontWants.splice(idx, 1);
                 renderDontWantList(player.dontWants);
             }
-        }
+        };
 
         function renderAvatarPickers() {
             updateAvatarPickerUI('addAvatarPicker', selectedAddAvatar, (av) => {
@@ -609,19 +618,19 @@
             });
         }
 
-        function openAddPlayerModal() {
+        window.openAddPlayerModal = function() {
             document.getElementById('newPlayerName').value = '';
             document.getElementById('newPlayerPos').value = '';
             selectedAddAvatar = '🏐';
             renderAvatarPickers();
             document.getElementById('addPlayerModal').classList.remove('hidden');
-        }
+        };
 
-        function closeAddPlayerModal() {
+        window.closeAddPlayerModal = function() {
             document.getElementById('addPlayerModal').classList.add('hidden');
-        }
+        };
 
-        function confirmAddPlayer() {
+        window.confirmAddPlayer = function() {
             const name = document.getElementById('newPlayerName').value.trim();
             if (!name) {
                 alert("Por favor, escribe el nombre de la jugadora.");
@@ -643,12 +652,12 @@
             };
 
             players.push(newPlayer);
-            saveData();
+            saveDataToFirebase();
             closeAddPlayerModal();
             showHomeView();
-        }
+        };
 
-        function copyAllSummaries() {
+        window.copyAllSummaries = function() {
             if (players.length === 0) {
                 alert("No hay jugadoras en la lista.");
                 return;
@@ -679,7 +688,7 @@
             }).catch(err => {
                 console.error('Error al copiar: ', err);
             });
-        }
+        };
 
         function escapeHtml(str) {
             if (!str) return '';
